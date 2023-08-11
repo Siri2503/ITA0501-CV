@@ -1,0 +1,37 @@
+import cv2
+import numpy as np
+
+# Initialize video capture
+cap = cv2.VideoCapture(r"C:\Users\nvisw\Downloads\traffic.mp4")
+
+# Initialize variables
+prev_frame = None
+initial_frame = None
+pixel_to_meter_ratio = 1  # Adjust this based on your scene
+
+while cap.isOpened():
+    ret, frame = cap.read()
+    
+    if not ret:
+        break
+    
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    
+    if prev_frame is not None:
+        # Calculate optical flow
+        flow = cv2.calcOpticalFlowFarneback(prev_frame, gray, None, 0.5, 3, 15, 3, 5, 1.2, 0)
+        magnitude, angle = cv2.cartToPolar(flow[..., 0], flow[..., 1])
+        
+        # Calculate average flow magnitude as vehicle speed
+        speed = np.mean(magnitude) * pixel_to_meter_ratio
+        
+        print(f"Estimated speed: {speed} meters per frame")
+    
+    prev_frame = gray.copy()
+    
+    cv2.imshow('Frame', frame)
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+cap.release()
+cv2.destroyAllWindows()
