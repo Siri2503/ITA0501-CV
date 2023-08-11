@@ -1,0 +1,20 @@
+import cv2
+import numpy as np
+
+image_path =r"C:\Users\nvisw\OneDrive\Pictures\Saved Pictures\ST.jpeg"
+image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
+
+prewitt_x = cv2.filter2D(image, cv2.CV_64F, np.array([[-1, 0, 1], [-1, 0, 1], [-1, 0, 1]]))
+prewitt_y = cv2.filter2D(image, cv2.CV_64F, np.array([[-1, -1, -1], [0, 0, 0], [1, 1, 1]]))
+prewitt_edges = cv2.magnitude(prewitt_x, prewitt_y)
+
+robert_x = cv2.filter2D(image, cv2.CV_64F, np.array([[1, 0], [0, -1]]))
+robert_y = cv2.filter2D(image, cv2.CV_64F, np.array([[0, 1], [-1, 0]]))
+robert_edges = cv2.magnitude(robert_x, robert_y)
+
+cv2.imshow('Original Image', image)
+cv2.imshow('Prewitt Edges', prewitt_edges.astype(np.uint8))
+cv2.imshow('Robert Edges', robert_edges.astype(np.uint8))
+
+cv2.waitKey(0)
+cv2.destroyAllWindows()
